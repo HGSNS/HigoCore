@@ -19,9 +19,11 @@ You can add the HigoCore SDK to your Xcode project using the Swift Package Manag
 
 1. In Xcode, open your project and navigate to **File > Add Packages...**
 2. In the search bar, enter the repository URL:
-    ```
+
+    ```url
     https://github.com/HGSNS/Higo-iOS-SDK-Core.git
     ```
+
 3. For **Dependency Rule**, select the desired version. We recommend using **Up to Next Major Version** to automatically receive compatible updates.
 4. Click **Add Package**.
 5. Choose the `HigoCore` library and add it to your application's target.
