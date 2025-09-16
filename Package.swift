@@ -14,8 +14,8 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "HigoCore",
-            url: "https://github.com/HGSNS/HigoCore/releases/download/0.0.1/HigoCore.xcframework.zip",
-            checksum: "879a4cf884e8875b113197ca14d8b2946bf5f73ecedd18406f2caf5aa1e489ac"
+            url: "https://github.com/HGSNS/HigoCore/releases/download/0.0.2/HigoCore.xcframework.zip",
+            checksum: "a942292d14f35e25b562c58b7a2630b3c8bf5539528e67ebc184d57ea1fa9024"
         )
     ]
 )
