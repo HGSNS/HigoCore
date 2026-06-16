@@ -1,21 +1,25 @@
 // swift-tools-version: 5.9
-// The swift-tools-version declares the minimum version of Swift required to build this package.
+// Template for the public HGSNS/HigoCore SPM distribution repository.
+// URL and checksum are updated by Fastlane release lanes.
 
 import PackageDescription
 
 let package = Package(
     name: "HigoCore",
+    platforms: [
+        .iOS(.v17)
+    ],
     products: [
         .library(
             name: "HigoCore",
             targets: ["HigoCore"]
-            ),
+        )
     ],
     targets: [
         .binaryTarget(
             name: "HigoCore",
-            url: "https://github.com/HGSNS/HigoCore/releases/download/1.0.1/HigoCore.xcframework.zip",
-            checksum: "205dab633814091cda7640d1673b5c517bf316f4ea67ececa5b185963bd88244"
+            url: "https://github.com/HGSNS/HigoCore/releases/download/0.0.0-test/HigoCore.xcframework.zip",
+            checksum: "1e992778c3332068b1f8d1adbac8b3481da8e61f717a40cb36beca142544f010"
         )
     ]
 )
