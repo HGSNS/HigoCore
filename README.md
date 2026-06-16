@@ -1,67 +1,92 @@
-# HigoCore SDK
+# Higo Core iOS SDK
 
-[![Swift Package Manager](https://img.shields.io/badge/Swift_Package_Manager-compatible-green.svg)](https://swift.org/package-manager/)
-[![Platform](https://img.shields.io/badge/platform-iOS-blue.svg)](https://developer.apple.com/ios/)
-
-## Description
-
-The `HigoCore` framework is the backbone of the Higo integration.
+Official iOS SDK for integrating Higo device pairing, Wi‑Fi provisioning, and visit APIs into your application.
 
 ## Requirements
 
-- **iOS:** 13.0 or later
-- **Xcode:** 14.0 or later
-- **Swift:** 5.7 or later
+- iOS 17.0+
+- Swift 5.9+
+- Bluetooth permission for device setup flows
 
 ## Installation
 
-You can add the HigoCore SDK to your Xcode project using the Swift Package Manager (SPM).
+Add the package dependency in Xcode (**File → Add Package Dependencies**) or in your `Package.swift`:
 
-1. In Xcode, open your project and navigate to **File > Add Packages...**
-2. In the search bar, enter the repository URL:
+```swift
+dependencies: [
+    .package(url: "https://github.com/HGSNS/HigoCore.git", exact: "1.0.0")
+],
+targets: [
+    .target(
+        name: "YourApp",
+        dependencies: [
+            .product(name: "HigoCore", package: "HigoCore")
+        ]
+    )
+]
+```
 
-    ```url
-    https://github.com/HGSNS/HigoCore.git
-    ```
+Release candidates use tags such as `1.0.0-RC1` (prerelease; for test builds only). Production apps should pin an official `X.Y.Z` tag.
 
-3. For **Dependency Rule**, select the desired version. We recommend using **Up to Next Major Version** to automatically receive compatible updates.
-4. Click **Add Package**.
-5. Choose the `HigoCore` library and add it to your application's target.
-
-## Usage
-
-After adding the package, you can import and configure the SDK in your application.
-
-First, import the framework in your `AppDelegate.swift` or wherever you manage your application's startup logic:
+## Quick start
 
 ```swift
 import HigoCore
-```
 
-Then, configure the SDK with your credentials, typically within the `application(_:didFinishLaunchingWithOptions:)` method:
-
-```swift
-// Create the server information
-let serverInfo = ServerInfo(
-    baseUrl: "https://your-api-base-url.com",
-    clientId: "your-client-id",
-    clientSecret: "your-client-secret"
+// 1. Initialize once per authenticated session
+try HigoCoreSDK.initialize(
+    configuration: CoreConfiguration(
+        serverInfo: ServerInfo(
+            host: "https://api.example.com",
+            clientId: "YOUR_CLIENT_ID",
+            clientSecret: "YOUR_CLIENT_SECRET"
+        ),
+        authCredentials: AuthCredentials(
+            email: userEmail,
+            accessToken: accessToken
+        )
+    )
 )
 
-// Create the configuration
-let configuration = CoreConfiguration(
-    serverInfo: serverInfo,
-    language: .en,
-    enableLogging: true 
+// 2. Pair a device (serial from QR or user input)
+let deviceManager = try HigoCoreSDK.deviceManager
+let result = try await deviceManager.initiatePairing(
+    serialNumber: serialNumber,
+    isDeviceAssigned: false,
+    isLoggingEnabled: false
 )
 
-// Initialize the SDK
-HigoCoreSDK.configure(with: configuration)
+// 3. Provision Wi‑Fi when pairing returns .paired
+if case .paired = result {
+    let networks = try await deviceManager.searchForWiFiNetworks(isLoggingEnabled: false)
+    try await deviceManager.provisionDevice(
+        serialNumber: serialNumber,
+        ssid: selectedSSID,
+        password: wifiPassword,
+        mode: .setup
+    )
+}
+
+// 4. Logout
+HigoCoreSDK.deinitialize()
 ```
 
-Now you can access the shared SDK instance throughout your app:
+Replace placeholder host and OAuth values with credentials from your Higo integration contact. Do not commit secrets to source control.
 
-```swift
-let higoSDK = HigoCoreSDK.shared
-// Use the SDK to perform actions
+## Documentation
+
+| Resource | Link |
+|----------|------|
+| Integration guides | [docs/index.md](docs/index.md) |
+| Troubleshooting | [docs/troubleshooting/README.md](docs/troubleshooting/README.md) |
+| Error reference | [docs/errors/README.md](docs/errors/README.md) |
+| API reference (DocC) | [Hosted API docs](https://hgsns.github.io/HigoCore/api/documentation/higocore) (available after Pages is enabled on first stable release) |
+
+## Permissions
+
+Add to your app `Info.plist`:
+
+```xml
+<key>NSBluetoothAlwaysUsageDescription</key>
+<string>Required to pair and configure your Higo device.</string>
 ```
