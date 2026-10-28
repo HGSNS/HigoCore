@@ -1,0 +1,16 @@
+# Maps paths in the internal monorepo to the public HGSNS/HigoCore repository.
+# Used by release/docs sync automation (PR6b). Never overwrite the monorepo root README.
+
+public_repo: HGSNS/HigoCore
+public_default_branch: main
+
+copy:
+  - source: docs/
+    destination: docs/
+  - source: distribution/README.md
+    destination: README.md
+  - source: distribution/Package.swift
+    destination: Package.swift
+
+preserve_on_public_repo:
+  - .gitignore
